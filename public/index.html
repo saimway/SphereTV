@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SphereTV — Premium Live Sports Streaming</title>
+  <meta name="description" content="Watch your favorite live sports events in high definition with SphereTV." />
+  <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #06060a;
+      --bg-secondary: #0c0c14;
+      --bg-card: rgba(18, 18, 29, 0.6);
+      --bg-card-hover: rgba(26, 26, 41, 0.75);
+      --bg-input: #151522;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: #7c5cfc;
+      --text-primary: #f3f3f6;
+      --text-secondary: #a0a0b8;
+      --text-muted: #64647f;
+      --accent: #7c5cfc;
+      --accent-gradient: linear-gradient(135deg, #7c5cfc, #a855f7);
+      --success: #00e68a;
+      --error: #ff3b5c;
+      --warning: #ffb347;
+      --live-red: #ff3b5c;
+      --glow-color: rgba(124, 92, 252, 0.15);
+      --glow-color-strong: rgba(124, 92, 252, 0.4);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #252538;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    .header {
+      width: 100%;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 20, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .logo-sphere {
+      position: relative;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ffffff;
+      display: inline-block;
+    }
+
+    .logo-sphere img {
+      position: absolute;
+      top: 0;
+      left: -1.5%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      box-shadow: 0 0 15px var(--glow-color-strong);
+    }
+
+    .main-logo {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 0 30px var(--glow-color-strong);
+    }
+
+    .brand-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(to right, #ffffff, #dcdcf0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-accent {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .nav-btn {
+      padding: 0.6rem 1.25rem;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-btn.active {
+      background: var(--accent-gradient);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--glow-color-strong);
+    }
+
+    .nav-btn:hover:not(.active) {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ── Main Layout Container ───────────────────── */
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 2.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ── Hero Banner ────────────────────────────── */
+    .hero {
+      background: radial-gradient(circle at top right, rgba(124, 92, 252, 0.12), transparent 60%),
+                  radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.05), transparent 50%),
+                  var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(124, 92, 252, 0.02), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 6s infinite;
+    }
+
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+    }
+
+    .hero-title span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* Search Bar */
+    .search-container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.95rem 1.25rem 0.95rem 3rem;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 4px var(--glow-color);
+      background: #181827;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ── Category Pill Filters ───────────────────── */
+    .categories-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .categories-scroll {
+      display: flex;
+      gap: 0.65rem;
+      overflow-x: auto;
+      padding: 0.2rem 0;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .categories-scroll::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+
+    .category-pill {
+      padding: 0.65rem 1.35rem;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      text-transform: capitalize;
+    }
+
+    .category-pill:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .category-pill.active {
+      background: #ffffff;
+      color: #06060a;
+      border-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── Match Cards Grid ────────────────────────── */
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .match-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .match-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(124, 92, 252, 0.2), rgba(168, 85, 247, 0)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .match-card:hover {
+      transform: translateY(-5px);
+      background: var(--bg-card-hover);
+      box-shadow: 0 12px 30px var(--glow-color);
+      border-color: var(--border-focus);
+    }
+
+    .match-card:hover::after {
+      opacity: 1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .badge-card {
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-card.cat {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      text-transform: capitalize;
+    }
+
+    .badge-card.live {
+      background: var(--live-red);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      box-shadow: 0 2px 8px rgba(255, 59, 92, 0.3);
+    }
+
+    .badge-card.live::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.4; }
+    }
+
+    .badge-card.popular {
+      background: linear-gradient(135deg, #ff9900, #ff5500);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(255, 85, 0, 0.3);
+    }
+
+    .stream-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Team badge / Title content */
+    .card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .teams-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .team-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .team-logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+      padding: 2px;
+    }
+
+    .team-logo-fallback {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .team-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .vs-separator {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      align-self: center;
+      padding: 0.1rem 0.5rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 4px;
+    }
+
+    .match-simple-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .card-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .match-time {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .match-time-icon {
+      color: var(--text-muted);
+    }
+
+    /* ── Player View ────────────────────────────── */
+    .player-view {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .player-back-btn {
+      align-self: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.65rem 1.25rem;
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .player-back-btn:hover {
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+      transform: translateX(-3px);
+    }
+
+    .player-layout {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1050px) {
+      .player-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .player-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .video-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .video-loader-overlay {
+      position: absolute;
+      inset: 0;
+      background: #000003;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .video-loader-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .player-info {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .player-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .player-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .player-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .player-teams-detail {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .player-team-large {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .player-team-large.home {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .player-team-large.away {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .player-team-logo-large {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .player-team-name-large {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .player-vs-large {
+      font-weight: 800;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Sidebar streams list */
+    .player-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .sidebar-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .streams-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+    }
+
+    .stream-row-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+    }
+
+    .stream-row-btn:hover {
+      border-color: var(--border-focus);
+      background: rgba(124, 92, 252, 0.05);
+    }
+
+    .stream-row-btn.active {
+      background: var(--accent-gradient);
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px var(--glow-color);
+    }
+
+    .stream-row-btn.active .stream-btn-title {
+      color: #fff;
+    }
+
+    .stream-row-btn.active .stream-btn-subtitle {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .stream-btn-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .stream-btn-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .stream-btn-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .stream-hd-badge {
+      background: rgba(0, 230, 138, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(0, 230, 138, 0.2);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 800;
+    }
+
+    .stream-row-btn.active .stream-hd-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .stream-viewers {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .stream-row-btn.active .stream-viewers {
+      color: #fff;
+    }
+
+    /* ── Utilities / Helpers ─────────────────────── */
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+      gap: 1.25rem;
+    }
+
+    .spinner {
+      width: 38px;
+      height: 38px;
+      border: 3.5px solid rgba(255, 255, 255, 0.05);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      color: var(--text-secondary);
+      text-align: center;
+      gap: 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    .empty-state svg {
+      width: 52px;
+      height: 52px;
+      stroke: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    .empty-state-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .empty-state-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 320px;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    .footer {
+      width: 100%;
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      background: var(--bg-secondary);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-credit {
+      font-weight: 500;
+    }
+
+    .footer-credit span {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ── Toast Notifications ─────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(18, 18, 29, 0.95);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      color: var(--text-primary);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-width: 380px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive adjustments ──────────────────── */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.25rem 1rem;
+        gap: 1.5rem;
+      }
+      .header {
+        padding: 1rem;
+      }
+      .hero {
+        padding: 2rem 1.25rem;
+      }
+      .hero-title {
+        font-size: 2rem;
+      }
+      .footer-inner {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <a href="#" class="brand" onclick="navigate('home', event)">
+      <div class="logo-sphere header-logo">
+        <img src="/logo.jpg" alt="SphereTV Logo" />
+      </div>
+      <div class="brand-name">Sphere<span class="brand-accent">TV</span></div>
+    </a>
+    <nav class="nav-links">
+      <button class="nav-btn active" id="nav-home" onclick="navigate('home')">Home</button>
+      <button class="nav-btn" id="nav-live" onclick="navigate('live')">Live</button>
+      <button class="nav-btn" id="nav-popular" onclick="navigate('popular')">Popular</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Home View Context: Hero & Filters -->
+    <div id="browse-context" style="display: flex; flex-direction: column; gap: 2rem;">
+      <!-- Hero Banner -->
+      <section class="hero" id="hero-section">
+        <div class="logo-sphere main-logo">
+          <img src="/logo.jpg" alt="SphereTV Logo" />
+        </div>
+        <h2 class="hero-title">Live Sports, <span>Anytime.</span></h2>
+        <p class="hero-subtitle">Watch your favorite sports matches and events live in high definition, completely free with SphereTV.</p>
+        <div class="search-container">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-bar" class="search-input" placeholder="Search matches, tournaments, or teams..." oninput="handleSearch()" autocomplete="off" />
+        </div>
+      </section>
+
+      <!-- Category Filter Pills -->
+      <div class="categories-wrapper">
+        <div class="categories-scroll" id="categories-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Matches Grid -->
+      <main class="match-grid" id="match-grid">
+        <!-- Loaded dynamically -->
+      </main>
+    </div>
+
+    <!-- Player View Context -->
+    <div class="player-view" id="player-view">
+      <button class="player-back-btn" onclick="goBackToMatches()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Matches
+      </button>
+
+      <div class="player-layout">
+        <!-- Main player video & info -->
+        <div class="player-main">
+          <div class="video-container">
+            <div class="video-loader-overlay" id="video-loader">
+              <div class="spinner"></div>
+              <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);">Loading Stream Source...</span>
+            </div>
+            <iframe id="video-iframe" class="video-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          </div>
+
+          <div class="player-info">
+            <div class="badge-row" id="player-badges">
+              <!-- Dynamically populated -->
+            </div>
+            <h3 class="player-title" id="player-match-title">Loading Match...</h3>
+            
+            <div class="player-meta">
+              <div class="player-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="match-time-icon">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="player-match-time">Loading time...</span>
+              </div>
+              <div class="player-meta-item">
+                <span id="player-category-text" style="text-transform: capitalize;">Sports</span>
+              </div>
+            </div>
+
+            <!-- Detailed Team Headers (if teams exist) -->
+            <div class="player-teams-detail" id="player-teams-detail" style="display: none;">
+              <div class="player-team-large home">
+                <span class="player-team-name-large" id="player-team-home-name">Home</span>
+                <img class="player-team-logo-large" id="player-team-home-logo" src="" alt="Home Logo" onerror="handleImageError(this, 'H')" />
+              </div>
+              <div class="player-vs-large">VS</div>
+              <div class="player-team-large away">
+                <img class="player-team-logo-large" id="player-team-away-logo" src="" alt="Away Logo" onerror="handleImageError(this, 'A')" />
+                <span class="player-team-name-large" id="player-team-away-name">Away</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Streams list sidebar -->
+        <div class="player-sidebar">
+          <div class="sidebar-section">
+            <h4 class="section-title">Available Streams</h4>
+            <div class="streams-list" id="streams-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">© 2026 SphereTV. All rights reserved.</div>
+      <div class="footer-credit">Made by <span>Saim</span></div>
+    </div>
+  </footer>
+
+  <!-- Toast Toast Notification -->
+  <div class="toast" id="toast">Saved configuration</div>
+
+  <!-- Frontend Logic -->
+  <script>
+    // ─── App State ────────────────────────────────────────────────────────
+    let currentView = 'home'; // 'home', 'live', 'popular'
+    let selectedCategory = 'all'; // 'all' or active category name
+    let searchQuery = '';
+    let matchesData = [];
+    let categoriesData = [];
+    let currentStreams = [];
+    let selectedMatch = null;
+    let selectedStreamIndex = 0;
+    let refreshInterval = null;
+
+    // ─── DOM References ───────────────────────────────────────────────────
+    const elBrowseContext = document.getElementById('browse-context');
+    const elHeroSection = document.getElementById('hero-section');
+    const elCategoriesList = document.getElementById('categories-list');
+    const elMatchGrid = document.getElementById('match-grid');
+    const elPlayerView = document.getElementById('player-view');
+    const elSearchBar = document.getElementById('search-bar');
+    
+    // Player DOM References
+    const elVideoIframe = document.getElementById('video-iframe');
+    const elVideoLoader = document.getElementById('video-loader');
+    const elPlayerMatchTitle = document.getElementById('player-match-title');
+    const elPlayerMatchTime = document.getElementById('player-match-time');
+    const elPlayerCategoryText = document.getElementById('player-category-text');
+    const elPlayerBadges = document.getElementById('player-badges');
+    const elStreamsList = document.getElementById('streams-list');
+    
+    const elPlayerTeamsDetail = document.getElementById('player-teams-detail');
+    const elPlayerHomeName = document.getElementById('player-team-home-name');
+    const elPlayerHomeLogo = document.getElementById('player-team-home-logo');
+    const elPlayerAwayName = document.getElementById('player-team-away-name');
+    const elPlayerAwayLogo = document.getElementById('player-team-away-logo');
+
+    // ─── Navigation ───────────────────────────────────────────────────────
+    function navigate(view, event) {
+      if (event) event.preventDefault();
+      
+      currentView = view;
+      selectedMatch = null;
+      
+      // Update Navigation button classes
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `nav-${view}`);
+      });
+      
+      // Show hero banner ONLY on Home view
+      if (view === 'home') {
+        elHeroSection.style.display = 'flex';
+      } else {
+        elHeroSection.style.display = 'none';
+      }
+
+      // Restore browse main panel view, hide player
+      elBrowseContext.style.display = 'flex';
+      elPlayerView.style.display = 'none';
+      
+      // Reset iframe to stop streaming
+      elVideoIframe.src = '';
+
+      // Toast feedback
+      let viewLabel = view.charAt(0).toUpperCase() + view.slice(1);
+      showToast(`Showing ${viewLabel} matches`);
+
+      fetchMatches();
+    }
+
+    // Go back to the match grid from the Player view
+    function goBackToMatches() {
+      elBrowseContext.style.display = 'flex';
+      elPlayerView.style.display = 'none';
+      elVideoIframe.src = '';
+      selectedMatch = null;
+      
+      // Resume intervals
+      startRefreshInterval();
+    }
+
+    // ─── Toast System ─────────────────────────────────────────────────────
+    function showToast(message, duration = 3000) {
+      const elToast = document.getElementById('toast');
+      elToast.textContent = message;
+      elToast.classList.add('show');
+      
+      setTimeout(() => {
+        elToast.classList.remove('show');
+      }, duration);
+    }
+
+    // ─── Time Parsing Helpers ─────────────────────────────────────────────
+    function isMatchLive(dateStr) {
+      const date = new Date(dateStr);
+      const now = Date.now();
+      const startTime = date.getTime();
+      // Match is live if start time has passed but it's less than 3 hours ago
+      return startTime <= now && (now - startTime) < 10800000;
+    }
+
+    // Format start time
+    function formatMatchTime(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      
+      const isToday = date.toDateString() === now.toDateString();
+      
+      const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      if (isMatchLive(dateStr)) {
+        return 'LIVE NOW';
+      }
+      
+      if (isToday) {
+        return `Today at ${timeStr}`;
+      }
+      
+      const tomorrow = new Date();
+      tomorrow.setDate(now.getDate() + 1);
+      const isTomorrow = date.toDateString() === tomorrow.toDateString();
+      if (isTomorrow) {
+        return `Tomorrow at ${timeStr}`;
+      }
+      
+      const options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      return date.toLocaleDateString([], options);
+    }
+
+    // Image Fallbacks
+    function getBadgeUrl(badge) {
+      if (!badge) return '';
+      const cleanId = badge.replace(/\.(webp|png|jpg|jpeg)$/i, '');
+      return `/api/images/badge/${cleanId}.webp`;
+    }
+
+    function handleImageError(img, letter) {
+      // Replace with beautiful monogram avatar
+      const parent = img.parentNode;
+      const fallback = document.createElement('div');
+      fallback.className = 'team-logo-fallback';
+      fallback.textContent = letter || 'T';
+      parent.replaceChild(fallback, img);
+    }
+
+    // ─── Category Filter Logic ────────────────────────────────────────────
+    function selectCategory(category) {
+      selectedCategory = category.toLowerCase();
+      
+      // Update pills
+      document.querySelectorAll('.category-pill').forEach(pill => {
+        const isActive = pill.getAttribute('data-cat') === selectedCategory;
+        pill.classList.toggle('active', isActive);
+      });
+      
+      renderMatchesGrid();
+    }
+
+    // ─── Search Handlers ──────────────────────────────────────────────────
+    function handleSearch() {
+      searchQuery = elSearchBar.value.toLowerCase().trim();
+      renderMatchesGrid();
+    }
+
+    // ─── Fetch Categories ─────────────────────────────────────────────────
+    async function fetchCategories() {
+      try {
+        const response = await fetch('/api/sports');
+        if (!response.ok) throw new Error('API failure');
+        categoriesData = await response.json();
+        renderCategoryPills();
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        // Fallback static categories if backend sports endpoint empty
+        categoriesData = [{ name: 'football' }, { name: 'basketball' }, { name: 'tennis' }, { name: 'f1' }];
+        renderCategoryPills();
+      }
+    }
+
+    function renderCategoryPills() {
+      let html = `<button class="category-pill ${selectedCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="selectCategory('all')">All Sports</button>`;
+      
+      categoriesData.forEach(cat => {
+        const name = cat.name.toLowerCase();
+        html += `<button class="category-pill ${selectedCategory === name ? 'active' : ''}" data-cat="${name}" onclick="selectCategory('${name}')">${cat.name}</button>`;
+      });
+      
+      elCategoriesList.innerHTML = html;
+    }
+
+    // ─── Fetch Matches ────────────────────────────────────────────────────
+    async function fetchMatches() {
+      // Show loading spinner
+      elMatchGrid.innerHTML = `
+        <div class="loader" style="grid-column: 1 / -1;">
+          <div class="spinner"></div>
+          <span>Loading live sports matches...</span>
+        </div>`;
+
+      let endpoint = '/api/matches-all';
+      if (currentView === 'live') {
+        endpoint = '/api/matches-live';
+      } else if (currentView === 'popular') {
+        endpoint = '/api/matches-all/popular';
+      }
+
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) throw new Error('Matches fetch failed');
+        
+        matchesData = await response.json();
+        
+        // Sort: Live first, then chronological
+        matchesData.sort((a, b) => {
+          const aLive = isMatchLive(a.date);
+          const bLive = isMatchLive(b.date);
+          if (aLive && !bLive) return -1;
+          if (!aLive && bLive) return 1;
+          return new Date(a.date) - new Date(b.date);
+        });
+
+        renderMatchesGrid();
+      } catch (err) {
+        console.error('Error loading matches:', err);
+        elMatchGrid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div class="empty-state-title">Unable to fetch matches</div>
+            <div class="empty-state-text">Please check your proxy connection or try reloading.</div>
+            <button class="player-back-btn" onclick="fetchMatches()" style="margin-top: 1rem; align-self: center;">Retry Connection</button>
+          </div>`;
+      }
+    }
+
+    // ─── Render Match Cards Grid ──────────────────────────────────────────
+    function renderMatchesGrid() {
+      // Filter logic
+      const filtered = matchesData.filter(match => {
+        // Category filter
+        const matchesCategory = selectedCategory === 'all' || (match.category && match.category.toLowerCase() === selectedCategory);
+        
+        // Search query filter
+        let matchesSearch = true;
+        if (searchQuery) {
+          const titleMatch = match.title && match.title.toLowerCase().includes(searchQuery);
+          const homeMatch = match.teams && match.teams.home && match.teams.home.name.toLowerCase().includes(searchQuery);
+          const awayMatch = match.teams && match.teams.away && match.teams.away.name.toLowerCase().includes(searchQuery);
+          const categoryMatch = match.category && match.category.toLowerCase().includes(searchQuery);
+          matchesSearch = titleMatch || homeMatch || awayMatch || categoryMatch;
+        }
+
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        elMatchGrid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <div class="empty-state-title">No matches found</div>
+            <div class="empty-state-text">There are currently no streams matching your criteria. Try switching categories or query.</div>
+          </div>`;
+        return;
+      }
+
+      elMatchGrid.innerHTML = filtered.map(m => {
+        const live = isMatchLive(m.date);
+        const hasTeams = m.teams && m.teams.home && m.teams.away;
+        const sourceCount = m.sources ? m.sources.length : 0;
+        
+        // Dynamic badges
+        const badgesHtml = `
+          <span class="badge-card cat">${m.category || 'Sports'}</span>
+          ${live ? '<span class="badge-card live">LIVE</span>' : ''}
+          ${m.popular ? '<span class="badge-card popular">POPULAR</span>' : ''}
+        `;
+
+        // Card Middle Content
+        let middleHtml = '';
+        if (hasTeams) {
+          const homeInitial = m.teams.home.name.charAt(0);
+          const awayInitial = m.teams.away.name.charAt(0);
+          
+          middleHtml = `
+            <div class="teams-container">
+              <div class="team-row">
+                <img class="team-logo" src="${getBadgeUrl(m.teams.home.badge)}" alt="${m.teams.home.name}" onerror="handleImageError(this, '${homeInitial}')" />
+                <span class="team-name">${m.teams.home.name}</span>
+              </div>
+              <div class="vs-separator">vs</div>
+              <div class="team-row">
+                <img class="team-logo" src="${getBadgeUrl(m.teams.away.badge)}" alt="${m.teams.away.name}" onerror="handleImageError(this, '${awayInitial}')" />
+                <span class="team-name">${m.teams.away.name}</span>
+              </div>
+            </div>`;
+        } else {
+          middleHtml = `<div class="match-simple-title">${m.title}</div>`;
+        }
+
+        return `
+          <div class="match-card" onclick="selectMatch('${m.id}')">
+            <div class="card-top">
+              <div class="badge-row">${badgesHtml}</div>
+              <div class="stream-count">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 11.54a29 29 0 0 0 .46 5.12 2.78 2.78 0 0 0 1.95 1.96C5.12 19.08 12 19.08 12 19.08s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96 29 29 0 0 0 .46-5.12 29 29 0 0 0-.46-5.12z"></path>
+                  <polygon points="9.75 15.02 15.5 11.54 9.75 8.06 9.75 15.02"></polygon>
+                </svg>
+                ${sourceCount} Stream${sourceCount !== 1 ? 's' : ''}
+              </div>
+            </div>
+            <div class="card-content">
+              ${middleHtml}
+            </div>
+            <div class="card-bottom">
+              <div class="match-time">
+                <svg class="match-time-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                ${formatMatchTime(m.date)}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ─── Select Match & Launch Player ─────────────────────────────────────
+    async function selectMatch(matchId) {
+      selectedMatch = matchesData.find(m => m.id === matchId);
+      if (!selectedMatch) return;
+
+      // Stop page intervals to save requests while viewing video stream
+      clearInterval(refreshInterval);
+
+      // Hide main feed, show player
+      elBrowseContext.style.display = 'none';
+      elPlayerView.style.display = 'flex';
+      
+      // Update details metadata in Player view
+      const hasTeams = selectedMatch.teams && selectedMatch.teams.home && selectedMatch.teams.away;
+      const isLiveNow = isMatchLive(selectedMatch.date);
+      
+      elPlayerMatchTitle.textContent = hasTeams 
+        ? `${selectedMatch.teams.home.name} vs ${selectedMatch.teams.away.name}`
+        : selectedMatch.title;
+        
+      elPlayerMatchTime.textContent = formatMatchTime(selectedMatch.date);
+      elPlayerCategoryText.textContent = selectedMatch.category || 'Sports';
+      
+      // Show team logos detail row if teams exist
+      if (hasTeams) {
+        elPlayerTeamsDetail.style.display = 'flex';
+        elPlayerHomeName.textContent = selectedMatch.teams.home.name;
+        elPlayerAwayName.textContent = selectedMatch.teams.away.name;
+        
+        // Reset image badges & sources
+        elPlayerHomeLogo.style.display = 'inline-block';
+        elPlayerAwayLogo.style.display = 'inline-block';
+        elPlayerHomeLogo.src = getBadgeUrl(selectedMatch.teams.home.badge);
+        elPlayerAwayLogo.src = getBadgeUrl(selectedMatch.teams.away.badge);
+      } else {
+        elPlayerTeamsDetail.style.display = 'none';
+      }
+
+      // Populate Player Badges
+      elPlayerBadges.innerHTML = `
+        <span class="badge-card cat">${selectedMatch.category || 'Sports'}</span>
+        ${isLiveNow ? '<span class="badge-card live">LIVE NOW</span>' : ''}
+        ${selectedMatch.popular ? '<span class="badge-card popular">POPULAR</span>' : ''}
+      `;
+
+      // Set iframe loader
+      elVideoLoader.classList.remove('fade-out');
+      elVideoIframe.src = '';
+
+      // Load streams
+      loadMatchStreams();
+    }
+
+    // Fetch Stream Channels
+    async function loadMatchStreams() {
+      elStreamsList.innerHTML = `
+        <div class="loader" style="padding: 2rem 0;">
+          <div class="spinner" style="width: 28px; height: 28px;"></div>
+          <span style="font-size: 0.8rem;">Locating Stream Channels...</span>
+        </div>`;
+
+      if (!selectedMatch.sources || selectedMatch.sources.length === 0) {
+        showPlayerError('No streams configured for this match');
+        return;
+      }
+
+      currentStreams = [];
+      const fetchPromises = selectedMatch.sources.map(async (src) => {
+        try {
+          const res = await fetch(`/api/stream/${src.source}/${src.id}`);
+          if (!res.ok) return [];
+          const streams = await res.json();
+          // Embed the upstream source name on each stream
+          return streams.map(s => ({ ...s, sourceName: src.source }));
+        } catch {
+          return [];
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+      currentStreams = results.flat();
+
+      if (currentStreams.length === 0) {
+        showPlayerError('No active channels online for this match');
+        return;
+      }
+
+      renderStreamsSidebar();
+      
+      // Auto play first stream
+      playStreamChannel(0);
+    }
+
+    function renderStreamsSidebar() {
+      elStreamsList.innerHTML = currentStreams.map((s, idx) => {
+        const hdIndicator = s.hd ? `<span class="stream-hd-badge">HD</span>` : '';
+
+        return `
+          <button class="stream-row-btn" id="stream-btn-${idx}" onclick="playStreamChannel(${idx})">
+            <div class="stream-btn-left">
+              <div class="stream-btn-title">
+                Channel #${s.streamNo} ${hdIndicator}
+              </div>
+              <div class="stream-btn-subtitle">
+                Source: ${s.sourceName.toUpperCase()} ${s.language ? `(${s.language})` : ''}
+              </div>
+            </div>
+          </button>`;
+      }).join('');
+    }
+
+    function playStreamChannel(index) {
+      selectedStreamIndex = index;
+      const stream = currentStreams[index];
+      if (!stream) return;
+
+      // Update button active state
+      document.querySelectorAll('.stream-row-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      // Show loader overlay
+      elVideoLoader.classList.remove('fade-out');
+
+      // Use direct iframe embedurl
+      if (stream.embedUrl) {
+        elVideoIframe.src = stream.embedUrl;
+        
+        elVideoIframe.onload = () => {
+          setTimeout(() => {
+            elVideoLoader.classList.add('fade-out');
+          }, 300);
+        };
+
+        showToast(`Playing Stream Channel #${stream.streamNo} (${stream.sourceName.toUpperCase()})`);
+      } else {
+        showPlayerError('Stream URL could not be resolved');
+      }
+    }
+
+    function showPlayerError(message) {
+      elVideoLoader.classList.remove('fade-out');
+      elVideoLoader.innerHTML = `
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span style="font-size: 0.9rem; font-weight: 600; color: var(--error);">${message}</span>
+      `;
+    }
+
+    // ─── Auto-Refresh Scheduler ──────────────────────────────────────────
+    function startRefreshInterval() {
+      if (refreshInterval) clearInterval(refreshInterval);
+      
+      // Auto-refresh match list and status every 60 seconds
+      refreshInterval = setInterval(() => {
+        if (!selectedMatch) {
+          fetchMatches();
+        }
+      }, 60000);
+    }
+
+    // ─── App Init ─────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchCategories();
+      fetchMatches();
+      startRefreshInterval();
+    });
+  </script>
+</body>
+</html>
