@@ -127,7 +127,6 @@ function sanitizeEmbedHtml(rawHtml, sourceUrl, proxyBase) {
   // 2. Neutralize anti-sandbox detection, anti-adblock alerts and anti-debuggers
   clean = clean.replace(/if\s*\(\s*hasSandbox\s*\)\s*{[\s\S]*?SANDBOX IFRAME NOT ALLOWED[\s\S]*?}/gi, '/* [AdShield] Sandbox check bypassed */');
   clean = clean.replace(/var\s+hasSandbox\s*=\s*false[\s\S]*?if\s*\(\s*hasSandbox\s*\)\s*{/gi, 'var hasSandbox = false; if (false) {');
-  clean = clean.replace(/if\s*\([^)]*sandbox[^)]*\)\s*{[\s\S]*?(?:Remove sandbox attributes|SANDBOX IFRAME NOT ALLOWED)[\s\S]*?}/gi, '/* [AdShield] Sandbox check bypassed */');
   clean = clean.replace(/function\s+dbgCheck\s*\(\s*\)\s*{[\s\S]*?}/gi, 'function dbgCheck() { return false; }');
   clean = clean.replace(/\bdebugger\s*;?/gi, '');
   clean = clean.replace(/window\.stop\s*\(\s*\)/gi, '/* [AdShield] window.stop bypassed */');
